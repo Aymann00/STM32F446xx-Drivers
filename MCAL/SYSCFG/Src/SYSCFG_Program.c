@@ -60,7 +60,7 @@ ERRORS_t SYSCFG_SetEXTIPort ( EXTI_t EXTI_Line , GPIO_PORT_t GPIO_PORT )
 	else
 	{
 		/* BIT MASKING : Clearing The Required 4 Bits */
-		SYSCFG->EXTICR[ REG_Number ] &= ( EXTICRx_MASK_BITS << BITS_Start ) ;
+		SYSCFG->EXTICR[ REG_Number ] &= ( ~ ( EXTICRx_MASK_BITS << BITS_Start ) ) ;
 
 		/* Set The Required Port for the Required External Interrupt Line */
 		SYSCFG->EXTICR[ REG_Number ] |= ( GPIO_PORT << BITS_Start ) ;
