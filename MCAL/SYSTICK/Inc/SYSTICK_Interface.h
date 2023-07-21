@@ -64,15 +64,17 @@ typedef struct
 /* ------------------------------- FUCTION PROTOTYPES SECTION START ------------------------------- */
 /* ------------------------------------------------------------------------------------------------ */
 
+/* Note : Kindly Read the Documentation Clearly Before Using the Functions */
+
 /**
  * @fn     : SYSTICK_Delayms
  * @brief  : Fuction That Makes Delay in Software Based on Passed Number of Milliseconds
  * @param  : Copy_u32TimeInMillis -> Time Passed To Delay in Milliseconds
  * @retval : ErrorStatus To Indicate if Function Worked Correctly or Not
- * @note   : => While Using ( STYSTICK_AHB ) Configuration Max Delay you can make in milliseconds is ( 2000 ms = 2s ) if you want more than this value
+ * @note   : => While Using ( STYSTICK_AHB ) Configuration Max Delay you can make in milliseconds is ( 1000 ms = 1s ) if you want more than this value
  *              you can go with the other configuration ( SYSTICK_AHB_BY8 ) or Just Use ( SYSTICK_AHB ) & Repeat Calling the Function
  *
- *           => While Using ( SYSTICK_AHB_BY8 ) Configuration Max Delay you can make in milliseconds is ( 16000 ms = 16s )
+ *           => While Using ( SYSTICK_AHB_BY8 ) Configuration Max Delay you can make in milliseconds is ( 8000 ms = 8s )
  **/
 
 ERRORS_t SYSTICK_Delayms(uint32_t Copy_u32TimeInMillis) ;
@@ -84,9 +86,9 @@ ERRORS_t SYSTICK_Delayms(uint32_t Copy_u32TimeInMillis) ;
  * @brief  : Fuction That Makes Delay in Software Based on Passed Number of MicroSeconds
  * @param  : Copy_u32TimeInMicroSeconds => Time Passed To Delay in MicroSeconds
  * @retval : ErrorStatus To Indicate If Function Worked Properly
- * @note   : => While Using ( STYSTICK_AHB ) Configuration Max Delay you can make in microseconds is ( 2000000 us = 2s ) if you want more than this value
+ * @note   : => While Using ( STYSTICK_AHB ) Configuration Max Delay you can make in microseconds is ( 1000000 us = 1s ) if you want more than this value
  *
- *           => While Using ( SYSTICK_AHB_BY8 ) Configuration Max Delay you can make in microseconds is ( 16000000 us = 16s )
+ *           => While Using ( SYSTICK_AHB_BY8 ) Configuration Max Delay you can make in microseconds is ( 8000000 us = 8s )
  **/
 ERRORS_t SYSTICK_Delayus(uint32_t Copy_u32TimeInMicroSeconds) ;
 
