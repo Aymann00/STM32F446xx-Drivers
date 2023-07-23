@@ -179,6 +179,16 @@ ERRORS_t EXTI_ReadPendingFlag( EXTI_LINE_t EXTILine , EXTI_PEND_t * EXTIStatus )
 
 
 
+/**
+ * @fn    : EXTI_SetSWInt
+ * @brief : This Function Allow you To Generate EXTI Line Request By Software
+ * @param : EXTILine => Required EXTI Line to Generate an Interrupt Request
+ * @return: ErrorStatus to Indicate if Function Worked Correctly or Not
+ */
+
+ERRORS_t EXTI_SetSWInt ( EXTI_LINE_t EXTILine ) ;
+
+
 /* ---------------------------------------------------------------------------------------------- */
 /* ------------------------------- FUCTION PROTOTYPES SECTION END ------------------------------- */
 /* ---------------------------------------------------------------------------------------------- */

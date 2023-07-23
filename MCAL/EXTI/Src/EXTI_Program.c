@@ -263,6 +263,30 @@ ERRORS_t EXTI_ReadPendingFlag( EXTI_LINE_t EXTILine , EXTI_PEND_t * EXTIStatus )
 
 }
 
+
+/**
+ * @fn    : EXTI_SetSWInt
+ * @brief : This Function Allow you To Generate EXTI Line Request By Software
+ * @param : EXTILine => Required EXTI Line to Generate an Interrupt Request
+ * @return: ErrorStatus to Indicate if Function Worked Correctly or Not
+ */
+
+ERRORS_t EXTI_SetSWInt ( EXTI_LINE_t EXTILine )
+{
+	ERRORS_t Local_u8ErrorStatus = OK ;
+
+	if( ( EXTILine < EXTI0 ) || ( EXTILine > EXTI22 ) )
+	{
+		Local_u8ErrorStatus = NOK ;
+	}
+	else
+	{
+		/* Set SW Interrupt */
+		EXTI->SWIER = ( 1 << EXTILine ) ;
+	}
+	return Local_u8ErrorStatus ;
+}
+
 /**
  * @fn    : EXTI_CheckConfig
  * @brief : This Function Check on Configuration Structure Passed By the User
