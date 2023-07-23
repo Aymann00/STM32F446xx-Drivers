@@ -54,7 +54,7 @@ void (*EXTI_PTR_TO_FUNCTION[23])(void) = { NULL } ;
  *                                                            4- Copy_PtrFuncEXTI => Call Back PTR To Function To Be Generated When an Inerrupt is Issued
  * @return : ErrorStatus To Indicate if Function Worked Properly
  */
-ERRORS_t EXTI_Init( EXTI_CONFG_t * EXTIConfiguration )
+ERRORS_t EXTI_Init( const EXTI_CONFG_t * EXTIConfiguration )
 {
 	ERRORS_t Local_u8ErrorStatus = OK ;
 
@@ -66,25 +66,23 @@ ERRORS_t EXTI_Init( EXTI_CONFG_t * EXTIConfiguration )
 		EXTI_PTR_TO_FUNCTION[ EXTIConfiguration->EXTILine ] = EXTIConfiguration->Copy_PtrFuncEXTI ;
 
 		/* Set Trigger Edge Detection */
-		if( RISING_TRG == EXTIConfiguration->TriggerSelection )
+		if( RISING_TRIG == EXTIConfiguration->TriggerSelection )
 		{
-			EXTI->RTSR |= ( 1 << EXTIConfiguration->EXTILine ) ;
+			EXTI_SetRisingTrig( EXTIConfiguration->EXTILine ) ;
 		}
-		else if( FALLING_TRG == EXTIConfiguration->TriggerSelection )
+		else if( FALLING_TRIG == EXTIConfiguration->TriggerSelection )
 		{
-			EXTI->FTSR |= ( 1 << EXTIConfiguration->EXTILine ) ;
+			EXTI_SetFallingTrig( EXTIConfiguration->EXTILine ) ;
 		}
 		else
 		{
 			/* Both Rising & Falling */
-			EXTI->RTSR |= ( 1 << EXTIConfiguration->EXTILine ) ;
-			EXTI->FTSR |= ( 1 << EXTIConfiguration->EXTILine ) ;
+			EXTI_SetRisingFallingTrig( EXTIConfiguration->EXTILine ) ;
 		}
 
 		/* Initial Enable / Disable Config */
+		EXTI->IMR &= ( ~ ( 1 << EXTIConfiguration->EXTILine ) ) ;
 		EXTI->IMR |= ( ( EXTIConfiguration->EXTIStatus ) << ( EXTIConfiguration->EXTILine ) ) ;
-
-
 	}
 	else
 	{
@@ -93,6 +91,82 @@ ERRORS_t EXTI_Init( EXTI_CONFG_t * EXTIConfiguration )
 	}
 	return Local_u8ErrorStatus ;
 }
+
+
+/**
+ * @fn    : EXTI_SetRisingTrig
+ * @brief : This Function Sets the Trigger to Rising For A specific EXTI Line
+ * @param : EXTILine => From Available EXTI Lines Provided in enum ( @EXTI_LINE_t )
+ * @return: ErrorStatus to Indicate if function worked properly
+ */
+
+ERRORS_t EXTI_SetRisingTrig( EXTI_LINE_t EXTILine )
+{
+	ERRORS_t Local_u8ErrorStatus = OK ;
+
+	if( EXTILine < EXTI0 || EXTILine > EXTI22 )
+	{
+		Local_u8ErrorStatus = NOK ;
+	}
+	else
+	{
+		/* Set Rising Trigger */
+		EXTI->RTSR |= ( 1 << EXTILine ) ;
+		EXTI->FTSR &= ( ~ ( 1 << EXTILine ) ) ;
+	}
+	return Local_u8ErrorStatus ;
+}
+
+
+/**
+ * @fn    : EXTI_SetFallingTrig
+ * @brief : This Function Sets the Trigger to Falling For A specific EXTI Line
+ * @param : EXTILine => From Available EXTI Lines Provided in enum ( @EXTI_LINE_t )
+ * @return: ErrorStatus to Indicate if function worked properly
+ */
+
+ERRORS_t EXTI_SetFallingTrig( EXTI_LINE_t EXTILine )
+{
+	ERRORS_t Local_u8ErrorStatus = OK ;
+
+	if( EXTILine < EXTI0 || EXTILine > EXTI22 )
+	{
+		Local_u8ErrorStatus = NOK ;
+	}
+	else
+	{
+		/* Set Falling Trigger */
+		EXTI->FTSR |= ( 1 << EXTILine ) ;
+		EXTI->RTSR &= ( ~ ( 1 << EXTILine ) ) ;
+	}
+	return Local_u8ErrorStatus ;
+}
+
+
+/**
+ * @fn    : EXTI_SetRisingFallingTrig
+ * @brief : This Function Sets the Trigger to Both Rising and Falling For A specific EXTI Line
+ * @param : EXTILine => From Available EXTI Lines Provided in enum ( @EXTI_LINE_t )
+ * @return: ErrorStatus to Indicate if function worked properly
+ */
+
+ERRORS_t EXTI_SetRisingFallingTrig( EXTI_LINE_t EXTILine )
+{
+	ERRORS_t Local_u8ErrorStatus = OK ;
+
+	if( EXTILine < EXTI0 || EXTILine > EXTI22 )
+	{
+		Local_u8ErrorStatus = NOK ;
+	}
+	else
+	{
+		/* Set Rising Falling Trigger */
+		EXTI->RTSR |= ( 1 << EXTILine ) ;
+		EXTI->FTSR |= ( 1 << EXTILine ) ;
+	}
+	return Local_u8ErrorStatus ;
+}
+
 
 /**
  * @fn    : EXTI_EnableInt
@@ -158,7 +232,7 @@ ERRORS_t EXTI_ClearPendingFlag( EXTI_LINE_t EXTILine )
 	else
 	{
 		/* Clear Pending Flag */
-		EXTI->PR |= ( 1 << EXTILine ) ;
+		EXTI->PR = ( 1 << EXTILine ) ;
 	}
 	return Local_u8ErrorStatus ;
 }
@@ -197,13 +271,13 @@ ERRORS_t EXTI_ReadPendingFlag( EXTI_LINE_t EXTILine , EXTI_PEND_t * EXTIStatus )
  * @note  : Private Function
  */
 
-static ERRORS_t EXTI_CheckConfig ( EXTI_CONFG_t * EXTIConfig )
+static ERRORS_t EXTI_CheckConfig ( const EXTI_CONFG_t * EXTIConfig )
 {
 	ERRORS_t Local_u8ErrorState = EXTI_OK;
 
 	if( ( EXTIConfig->EXTILine < EXTI0 ) || ( EXTIConfig->EXTILine > EXTI22 ) ||
 			( EXTIConfig->EXTIStatus < DISABLED ) || ( EXTIConfig->EXTIStatus > ENABLED ) ||
-			( EXTIConfig->TriggerSelection < RISING_TRG ) || ( EXTIConfig->TriggerSelection > RISING_FALLING_TRIG ) )
+			( EXTIConfig->TriggerSelection < RISING_TRIG ) || ( EXTIConfig->TriggerSelection > RISING_FALLING_TRIG ) )
 	{
 		Local_u8ErrorState = EXTI_NOK ;
 	}
@@ -219,16 +293,7 @@ static ERRORS_t EXTI_CheckConfig ( EXTI_CONFG_t * EXTIConfig )
  * HANDLERS SECTION
  *==============================================================================================================================================*/
 
-void EXTI0_IRQHandler(void)
-{
-	/* Clear Pending Flag */
-	EXTI_ClearPendingFlag( EXTI0 ) ;
 
-	if( EXTI_PTR_TO_FUNCTION[ EXTI0 ] != NULL )
-	{
-		EXTI_PTR_TO_FUNCTION[ EXTI0 ] ( ) ;
-	}
-}
 
 void EXTI1_IRQHandler(void)
 {

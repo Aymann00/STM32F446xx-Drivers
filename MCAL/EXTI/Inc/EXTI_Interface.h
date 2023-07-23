@@ -27,7 +27,7 @@
 
 typedef enum
 {
-	RISING_TRG = 0 , FALLING_TRG , RISING_FALLING_TRIG
+	RISING_TRIG = 0 , FALLING_TRIG , RISING_FALLING_TRIG
 
 }TRIG_SELECT_t;
 
@@ -100,7 +100,39 @@ typedef struct
  *                                                            4- Copy_PtrFuncEXTI => Call Back PTR To Function To Be Generated When an Inerrupt is Issued
  * @return : ErrorStatus To Indicate if Function Worked Properly
  */
-ERRORS_t EXTI_Init( EXTI_CONFG_t  * EXTIConfiguration ) ;
+ERRORS_t EXTI_Init( const EXTI_CONFG_t  * EXTIConfiguration ) ;
+
+
+/**
+ * @fn    : EXTI_SetRisingTrig
+ * @brief : This Function Sets the Trigger to Rising For A specific EXTI Line
+ * @param : EXTILine => From Available EXTI Lines Provided in enum ( @EXTI_LINE_t )
+ * @return: ErrorStatus to Indicate if function worked properly
+ */
+
+ERRORS_t EXTI_SetRisingTrig( EXTI_LINE_t EXTILine ) ;
+
+
+
+/**
+ * @fn    : EXTI_SetFallingTrig
+ * @brief : This Function Sets the Trigger to Falling For A specific EXTI Line
+ * @param : EXTILine => From Available EXTI Lines Provided in enum ( @EXTI_LINE_t )
+ * @return: ErrorStatus to Indicate if function worked properly
+ */
+
+ERRORS_t EXTI_SetFallingTrig( EXTI_LINE_t EXTILine ) ;
+
+
+/**
+ * @fn    : EXTI_SetRisingFallingTrig
+ * @brief : This Function Sets the Trigger to Both Rising and Falling For A specific EXTI Line
+ * @param : EXTILine => From Available EXTI Lines Provided in enum ( @EXTI_LINE_t )
+ * @return: ErrorStatus to Indicate if function worked properly
+ */
+
+ERRORS_t EXTI_SetRisingFallingTrig( EXTI_LINE_t EXTILine ) ;
+
 
 
 /**
