@@ -33,6 +33,6 @@
  * @note  : Private Function
  */
 
-static ERRORS_t EXTI_CheckConfig ( EXTI_CONFG_t * EXTIConfig ) ;
+static ERRORS_t EXTI_CheckConfig ( const EXTI_CONFG_t * EXTIConfig ) ;
 
 #endif /* EXTI_INC_EXTI_PRIVATE_H_ */
