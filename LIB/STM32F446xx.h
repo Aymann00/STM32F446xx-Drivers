@@ -293,8 +293,9 @@ typedef struct
 	volatile uint32_t EXTICR[ 4 ] ; /* SYSCFG External Interrupt Configuration Registers*/
 	uint32_t RESERVED0[2] ;
 	volatile uint32_t CMPCR ; /* Compensation Cell Control Register */
-	volatile uint32_t CFGR ; /* SYSCFG Configuration Register */
 	uint32_t RESERVED1[2] ;
+	volatile uint32_t CFGR ; /* SYSCFG Configuration Register */
+
 
 }SYSCFG_RegDef_t;
 
