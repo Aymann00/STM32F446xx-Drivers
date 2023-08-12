@@ -52,6 +52,9 @@
 
 #define RCC_BASE_ADDRESS 0x40023800UL
 
+#define DMA1_BASE_ADDRESS 0x40026000UL
+#define DMA2_BASE_ADDRESS 0x40026400UL
+
 /* ---------------------------------------------------------------------------------------------- */
 /* ------------------------------- AHB2 PERIPHERAL BASE ADDRESSES ------------------------------- */
 /* ---------------------------------------------------------------------------------------------- */
@@ -244,43 +247,37 @@ typedef struct
 /* ------------------------------------------------------------------------------------------ */
 /* ------------------------------- NVIC Peripheral Definition ------------------------------- */
 /* ------------------------------------------------------------------------------------------ */
-#define NVIC ((NVIC_RegDef_t *) NVIC_BASE_ADDRESS)
-
+#define NVIC ((NVIC_RegDef_t *)NVIC_BASE_ADDRESS)
 
 /* ------------------------------------------------------------------------------------------------- */
 /* ------------------------------- SCB REGISTERS Definition Structure ------------------------------ */
 /* ------------------------------------------------------------------------------------------------- */
 typedef struct
 {
-   volatile uint32_t ACTLR ; /* Auxilary Control Register */
-   uint32_t RESERVED0[829] ;
-   volatile uint32_t CPUID ; /* CPUID Base Register */
-   volatile uint32_t ICSR ; /* Interrupt Control and State Register */
-   volatile uint32_t VTOR ; /* Vector Table Offset Register */
-   volatile uint32_t AIRCR ; /* Application Interrupt and Reset Control Register */
-   volatile uint32_t SCR ; /* System Control Register */
-   volatile uint32_t CCR ; /* Configuration and Control Register */
-   volatile uint32_t SHPR[3] ; /* Sytem Handler Priority Registers */
-   volatile uint32_t SHCSR ; /* System Handler Control and State Register */
-   volatile uint8_t MMFSR ; /* MemManage Fault Status Register */
-   volatile uint8_t BFSR ; /* BusFault Status Register */
-   volatile uint16_t UFSR ; /* UsageFault Status Register */
-   volatile uint32_t HFSR ; /* HardFault Status Register */
-   uint32_t RESERVED1 ;
-   volatile uint32_t MMAR ; /* MemManage Fault Address Register */
-   volatile uint32_t BFAR ; /* BusFault Address Register */
-   volatile uint32_t AFSR ; /* Auxiliary Fault Status Register */
-}SCB_RegDef_t;
-
+	volatile uint32_t ACTLR; /* Auxilary Control Register */
+	uint32_t RESERVED0[829];
+	volatile uint32_t CPUID;   /* CPUID Base Register */
+	volatile uint32_t ICSR;	   /* Interrupt Control and State Register */
+	volatile uint32_t VTOR;	   /* Vector Table Offset Register */
+	volatile uint32_t AIRCR;   /* Application Interrupt and Reset Control Register */
+	volatile uint32_t SCR;	   /* System Control Register */
+	volatile uint32_t CCR;	   /* Configuration and Control Register */
+	volatile uint32_t SHPR[3]; /* Sytem Handler Priority Registers */
+	volatile uint32_t SHCSR;   /* System Handler Control and State Register */
+	volatile uint8_t MMFSR;	   /* MemManage Fault Status Register */
+	volatile uint8_t BFSR;	   /* BusFault Status Register */
+	volatile uint16_t UFSR;	   /* UsageFault Status Register */
+	volatile uint32_t HFSR;	   /* HardFault Status Register */
+	uint32_t RESERVED1;
+	volatile uint32_t MMAR; /* MemManage Fault Address Register */
+	volatile uint32_t BFAR; /* BusFault Address Register */
+	volatile uint32_t AFSR; /* Auxiliary Fault Status Register */
+} SCB_RegDef_t;
 
 /* ----------------------------------------------------------------------------------------- */
 /* ------------------------------- SCB Peripheral Definition ------------------------------- */
 /* ----------------------------------------------------------------------------------------- */
-#define SCB ( (SCB_RegDef_t *)SCB_BASE_ADDRESS )
-
-
-
-
+#define SCB ((SCB_RegDef_t *)SCB_BASE_ADDRESS)
 
 /* ---------------------------------------------------------------------------------------------------- */
 /* ------------------------------- SYSCFG REGISTERS Definition Structure ------------------------------ */
@@ -288,41 +285,103 @@ typedef struct
 
 typedef struct
 {
-	volatile uint32_t MEMRMP ; /* SYSCFG Memory Remap Register */
-	volatile uint32_t PMC ; /* SYSCFG Peripheral Mode Configuration Register */
-	volatile uint32_t EXTICR[ 4 ] ; /* SYSCFG External Interrupt Configuration Registers*/
-	uint32_t RESERVED0[2] ;
-	volatile uint32_t CMPCR ; /* Compensation Cell Control Register */
-	uint32_t RESERVED1[2] ;
-	volatile uint32_t CFGR ; /* SYSCFG Configuration Register */
+	volatile uint32_t MEMRMP;	 /* SYSCFG Memory Remap Register */
+	volatile uint32_t PMC;		 /* SYSCFG Peripheral Mode Configuration Register */
+	volatile uint32_t EXTICR[4]; /* SYSCFG External Interrupt Configuration Registers*/
+	uint32_t RESERVED0[2];
+	volatile uint32_t CMPCR; /* Compensation Cell Control Register */
+	uint32_t RESERVED1[2];
+	volatile uint32_t CFGR; /* SYSCFG Configuration Register */
 
-
-}SYSCFG_RegDef_t;
+} SYSCFG_RegDef_t;
 
 /* -------------------------------------------------------------------------------------------- */
 /* ------------------------------- SYSCFG Peripheral Definition ------------------------------- */
 /* -------------------------------------------------------------------------------------------- */
-#define SYSCFG  ( ( SYSCFG_RegDef_t * ) SYSCFG_BASE_ADDRESS )
-
+#define SYSCFG ((SYSCFG_RegDef_t *)SYSCFG_BASE_ADDRESS)
 
 /* -------------------------------------------------------------------------------------------------- */
 /* ------------------------------- EXTI REGISTERS Definition Structure ------------------------------ */
 /* -------------------------------------------------------------------------------------------------- */
 typedef struct
 {
-	volatile uint32_t IMR ; /* Interrupt Mask Register */
-	volatile uint32_t EMR ; /* Event Mask Register */
-	volatile uint32_t RTSR ; /* Rising Trigger Selection Register */
-	volatile uint32_t FTSR ; /* Falling Trigger Selection Register */
-	volatile uint32_t SWIER ; /* Software Interrupt Event Register */
-	volatile uint32_t PR ; /* Pending Register */
-}EXTI_RegDef_t;
-
+	volatile uint32_t IMR;	 /* Interrupt Mask Register */
+	volatile uint32_t EMR;	 /* Event Mask Register */
+	volatile uint32_t RTSR;	 /* Rising Trigger Selection Register */
+	volatile uint32_t FTSR;	 /* Falling Trigger Selection Register */
+	volatile uint32_t SWIER; /* Software Interrupt Event Register */
+	volatile uint32_t PR;	 /* Pending Register */
+} EXTI_RegDef_t;
 
 /* ------------------------------------------------------------------------------------------ */
 /* ------------------------------- EXTI Peripheral Definition ------------------------------- */
 /* ------------------------------------------------------------------------------------------ */
-#define EXTI ( ( EXTI_RegDef_t * ) EXTI_BASE_ADDRESS )
+#define EXTI ((EXTI_RegDef_t *)EXTI_BASE_ADDRESS)
 
+/* ------------------------------------------------------------------------------------------------- */
+/* ------------------------------- DMA REGISTERS Definition Structure ------------------------------ */
+/* ------------------------------------------------------------------------------------------------- */
+
+typedef struct
+{
+	volatile uint32_t CR;	/* DMA Stream x Configuration Register */
+	volatile uint32_t NDTR; /* DMA Stream x Number of Data Register */
+	volatile uint32_t PAR;	/* DMA Stream x Peripheral Address Register */
+	volatile uint32_t M0AR; /* DMA Stream x Memory 0 Address Register */
+	volatile uint32_t M1AR; /* DMA Stream x Memory 1 Address Register */
+	volatile uint32_t FCR;	/* DMA Stream x FIFO Control Register */
+
+} DMA_Stream_RegDef_t;
+
+typedef struct
+{
+	volatile uint16_t ISR[4];				/* DMA Interrupt Status Registers */
+	volatile uint16_t IFCR[4];				/* DMA Interrupt Flag Clear Registers */
+	volatile DMA_Stream_RegDef_t STREAM[8]; /* DMA Stream Registers */
+
+} DMA_RegDef_t;
+
+/* ----------------------------------------------------------------------------------------- */
+/* ------------------------------- DMA Peripheral Definition ------------------------------- */
+/* ----------------------------------------------------------------------------------------- */
+#define DMA1 ((DMA_RegDef_t *)DMA1_BASE_ADDRESS)
+#define DMA2 ((DMA_RegDef_t *)DMA2_BASE_ADDRESS)
+
+/* ---------------------------------------------------------------------------------- */
+/* ------------------------------- DMA REGISTERS Bits ------------------------------- */
+/* ---------------------------------------------------------------------------------- */
+
+typedef enum
+{
+	EN = 0,		 /* DMA Stream Enable */
+	DMEIE = 1,	 /* Direct Mode Error Interrupt Enable */
+	TEIE = 2,	 /* Transfer Error Interrupt Enable */
+	HTIE = 3,	 /* Half Transfer Interrupt Enable */
+	TCIE = 4,	 /* Transfer Complete Interrupt Enable */
+	PFCTRL = 5,	 /* Peripheral Flow Controller */
+	DIR = 6,	 /* Data Transfer Direction */
+	CIRC = 8,	 /* Circular Mode */
+	PINC = 9,	 /* Peripheral Increment Mode */
+	MINC = 10,	 /* Memory Increment Mode */
+	PSIZE = 11,	 /* Peripheral Size */
+	MSIZE = 13,	 /* Memory Size */
+	PINCOS = 15, /* Peripheral Increment Offset Size */
+	PL = 16,	 /* Priority Level */
+	DBM = 18,	 /* Double Buffer Mode */
+	CT = 19,	 /* Current Target Memory */
+	PBURST = 21, /* Peripheral Burst Transfer Configuration */
+	MBURST = 23, /* Memory Burst Transfer Configuration */
+	CHSEL = 25	 /* Channel Selection */
+
+} DMA_STREAM_CONFIGURATION_BITS_t;
+
+typedef enum
+{
+	FTH = 0,   /* FIFO Threshold Selection */
+	DMDIS = 2, /* Direct Mode Disable */
+	FS = 3,	   /* FIFO Status */
+	FEIE = 7   /* FIFO Error Interrupt Enable */
+
+} DMA_FIFO_CONTROL_BITS_t;
 
 #endif /* STM32F446XX_H_ */
