@@ -464,6 +464,119 @@ static ERRORS_t DMA_CheckInitConfig(DMA_INIT_STRUCT_t *DMA_InitConfig)
     return Local_u8ErrorStatus;
 }
 
+/**
+ * @brief  : This Function Handles the Interrupts of the DMA When DMA IRQ Handler is Called
+ *
+ * @param  : DMANumber => Enum that holds All Possible DMA Controllers -> Check Options ( @DMA_CONTROLLER_t )
+ * @param  : StreamNumber => Enum that holds All Possible Streams -> Check Options ( @DMA_STREAMS_t )
+ * @return : ERRORS_t => Error Status To Indicate if Function Worked Properly( DMA_OK ) or Not ( DMA_NOK )
+ * @note   : This Function is a Private Function , Specified For Driver Use Only
+ */
+static ERRORS_t DMA_IRQHandler(DMA_CONTROLLER_t DMANumber, DMA_STREAMS_t StreamNumber)
+{
+    ERRORS_t Local_u8ErrorStatus = DMA_OK;
+
+    if (DMANumber < DMA1 || DMANumber > DMA2 ||
+        StreamNumber < DMA_STREAM0 || StreamNumber > DMA_STREAM7)
+    {
+        Local_u8ErrorStatus = DMA_NOK;
+    }
+    else
+    {
+        DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
+
+        DMA_ReadInterruptFlag(DMANumber, StreamNumber, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
+
+        if (FlagStatus == DMA_FLAG_SET)
+        {
+            /* Transfer Complete IT Occured */
+
+            DMA_ClearInterruptFlag(DMANumber, StreamNumber, TRANSFER_COMPLETE_IT_FLAG);
+
+            if (DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_CMP_CALLBACK] != NULL && DMANumber == DMA1_CONTROLLER)
+            {
+                DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_CMP_CALLBACK]();
+            }
+            else if (DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_CMP_CALLBACK] != NULL && DMANumber == DMA2_CONTROLLER)
+            {
+                DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_CMP_CALLBACK]();
+            }
+        }
+
+        DMA_ReadInterruptFlag(DMANumber, StreamNumber, HALF_TRANSFER_IT_FLAG, &FlagStatus);
+
+        if (FlagStatus == DMA_FLAG_SET)
+        {
+            /* Half Transfer IT Occured */
+
+            DMA_ClearInterruptFlag(DMANumber, StreamNumber, HALF_TRANSFER_IT_FLAG);
+
+            if (DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_HALF_TRANSFER_CALLBACK] != NULL && DMANumber == DMA1_CONTROLLER)
+            {
+                DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_HALF_TRANSFER_CALLBACK]();
+            }
+            else if (DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_HALF_TRANSFER_CALLBACK] != NULL && DMANumber == DMA2_CONTROLLER)
+            {
+                DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_HALF_TRANSFER_CALLBACK]();
+            }
+        }
+
+        DMA_ReadInterruptFlag(DMANumber, StreamNumber, TRANSFER_ERROR_IT_FLAG, &FlagStatus);
+
+        if (FlagStatus == DMA_FLAG_SET)
+        {
+            /* Transfer Error IT Occured */
+
+            DMA_ClearInterruptFlag(DMANumber, StreamNumber, TRANSFER_ERROR_IT_FLAG);
+
+            if (DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_ERROR_CALLBACK] != NULL && DMANumber == DMA1_CONTROLLER)
+            {
+                DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_ERROR_CALLBACK]();
+            }
+            else if (DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_ERROR_CALLBACK] != NULL && DMANumber == DMA2_CONTROLLER)
+            {
+                DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_TRANSFER_ERROR_CALLBACK]();
+            }
+        }
+        DMA_ReadInterruptFlag(DMANumber, StreamNumber, DIRECT_MODE_ERROR_IT_FLAG, &FlagStatus);
+
+        if (FlagStatus == DMA_FLAG_SET)
+        {
+            /* Direct Mode Error IT Occured */
+
+            DMA_ClearInterruptFlag(DMANumber, StreamNumber, DIRECT_MODE_ERROR_IT_FLAG);
+
+            if (DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_DIRECT_MODE_ERROR_CALLBACK] != NULL && DMANumber == DMA1_CONTROLLER)
+            {
+                DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_DIRECT_MODE_ERROR_CALLBACK]();
+            }
+            else if (DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_DIRECT_MODE_ERROR_CALLBACK] != NULL && DMANumber == DMA2_CONTROLLER)
+            {
+                DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_DIRECT_MODE_ERROR_CALLBACK]();
+            }
+        }
+
+        DMA_ReadInterruptFlag(DMANumber, StreamNumber, FIFO_ERROR_IT_FLAG, &FlagStatus);
+
+        if (FlagStatus == DMA_FLAG_SET)
+        {
+            /* FIFO Error IT Occured */
+
+            DMA_ClearInterruptFlag(DMANumber, StreamNumber, FIFO_ERROR_IT_FLAG);
+
+            if (DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_FIFO_ERROR_CALLBACK] != NULL && DMANumber == DMA1_CONTROLLER)
+            {
+                DMA1_STREAM_PTR_TOFUNC[StreamNumber][DMA_FIFO_ERROR_CALLBACK]();
+            }
+            else if (DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_FIFO_ERROR_CALLBACK] != NULL && DMANumber == DMA2_CONTROLLER)
+            {
+                DMA2_STREAM_PTR_TOFUNC[StreamNumber][DMA_FIFO_ERROR_CALLBACK]();
+            }
+        }
+    }
+    return Local_u8ErrorStatus;
+}
+
 /*==============================================================================================================================================
  * HANDLERS SECTION
  *==============================================================================================================================================*/
@@ -474,147 +587,31 @@ static ERRORS_t DMA_CheckInitConfig(DMA_INIT_STRUCT_t *DMA_InitConfig)
 
 void DMA1_Stream0_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM0, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM0, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM0][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM0][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM0);
 }
 void DMA1_Stream1_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM1, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM1, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM1][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM1][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
-}
-void DMA1_Stream2_IRQHandler(void)
-{
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM2, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM2, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM2][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM2][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM1);
 }
 void DMA1_Stream3_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM3, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM3, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM3][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM3][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+   DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM3);
 }
 void DMA1_Stream4_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM4, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM4, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM4][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM4][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM4);
 }
 void DMA1_Stream5_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM5, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM0, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM5][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM5][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM5);
 }
 void DMA1_Stream6_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM6, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM6, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM6][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM6][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM6);
 }
 void DMA1_Stream7_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA1_CONTROLLER, DMA_STREAM7, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA1_CONTROLLER, DMA_STREAM7, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA1_STREAM_PTR_TOFUNC[DMA_STREAM7][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA1_STREAM_PTR_TOFUNC[DMA_STREAM7][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM7);
 }
 
 /* ==========================
@@ -623,146 +620,34 @@ void DMA1_Stream7_IRQHandler(void)
 
 void DMA2_Stream0_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM0, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM0, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM0][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM0][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM0);
 }
 void DMA2_Stream1_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM1, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM1, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM1][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM1][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM1);
 }
 void DMA2_Stream2_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM2, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM1, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM2][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM2][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM2);
 }
 void DMA2_Stream3_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM3, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM3, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM3][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM3][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM3);
 }
 void DMA2_Stream4_IRQHandler(void)
-{
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM4, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM4, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM4][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM4][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+{ 
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM4);
 }
 void DMA2_Stream5_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM5, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM5, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM5][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM5][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM5);
 }
 void DMA2_Stream6_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM6, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM6, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM6][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM6][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM6);
 }
 
 void DMA2_Stream7_IRQHandler(void)
 {
-    DMA_Interrupt_Flag_Status_t FlagStatus = DMA_FLAG_RESET;
-
-    DMA_ReadInterruptFlag(DMA2_CONTROLLER, DMA_STREAM7, TRANSFER_COMPLETE_IT_FLAG, &FlagStatus);
-
-    if (FlagStatus == DMA_FLAG_SET)
-    {
-        /* Transfer Complete IT Occured */
-
-        DMA_ClearInterruptFlag(DMA2_CONTROLLER, DMA_STREAM7, TRANSFER_COMPLETE_IT_FLAG);
-
-        if (DMA2_STREAM_PTR_TOFUNC[DMA_STREAM7][DMA_TRANSFER_CMP_CALLBACK] != NULL)
-        {
-            DMA2_STREAM_PTR_TOFUNC[DMA_STREAM7][DMA_TRANSFER_CMP_CALLBACK]();
-        }
-    }
+    DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM7);
 }

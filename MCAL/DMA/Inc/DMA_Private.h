@@ -29,6 +29,16 @@
  */
 static ERRORS_t DMA_CheckInitConfig(DMA_INIT_STRUCT_t *DMA_InitConfig);
 
+/**
+ * @brief  : This Function Handles the Interrupts of the DMA When DMA IRQ Handler is Called
+ *
+ * @param  : DMANumber => Enum that holds All Possible DMA Controllers -> Check Options ( @DMA_CONTROLLER_t )
+ * @param  : StreamNumber => Enum that holds All Possible Streams -> Check Options ( @DMA_STREAMS_t )
+ * @return : ERRORS_t => Error Status To Indicate if Function Worked Properly( DMA_OK ) or Not ( DMA_NOK )
+ * @note   : This Function is a Private Function , Specified For Driver Use Only
+ */
+static ERRORS_t DMA_IRQHandler(DMA_CONTROLLER_t DMANumber, DMA_STREAMS_t StreamNumber);
+
 /* ======================================================================
  * MASKS
  * ====================================================================== */
