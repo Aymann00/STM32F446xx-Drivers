@@ -241,6 +241,10 @@ ERRORS_t DMA_Init(DMA_INIT_STRUCT_t *Init)
         DMA[Init->DMAController]->STREAM[Init->StreamNumber].CR &= (DMA_CIRC_MASK);
         DMA[Init->DMAController]->STREAM[Init->StreamNumber].CR |= (Init->Mode << CIRC);
 
+        /* Set Double Buffer Mode */
+        DMA[Init->DMAController]->STREAM[Init->StreamNumber].CR &= (DMA_DBM_MASK);
+        DMA[Init->DMAController]->STREAM[Init->StreamNumber].CR |= (Init->DoubleBuffer << DBM);
+
         /* Set Memory Increment Option */
         DMA[Init->DMAController]->STREAM[Init->StreamNumber].CR &= (DMA_MINC_MASK);
         DMA[Init->DMAController]->STREAM[Init->StreamNumber].CR |= (Init->MemInc << MINC);
@@ -595,7 +599,7 @@ void DMA1_Stream1_IRQHandler(void)
 }
 void DMA1_Stream3_IRQHandler(void)
 {
-   DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM3);
+    DMA_IRQHandler(DMA1_CONTROLLER, DMA_STREAM3);
 }
 void DMA1_Stream4_IRQHandler(void)
 {
@@ -635,7 +639,7 @@ void DMA2_Stream3_IRQHandler(void)
     DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM3);
 }
 void DMA2_Stream4_IRQHandler(void)
-{ 
+{
     DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM4);
 }
 void DMA2_Stream5_IRQHandler(void)
@@ -646,7 +650,6 @@ void DMA2_Stream6_IRQHandler(void)
 {
     DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM6);
 }
-
 void DMA2_Stream7_IRQHandler(void)
 {
     DMA_IRQHandler(DMA2_CONTROLLER, DMA_STREAM7);

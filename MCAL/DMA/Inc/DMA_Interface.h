@@ -126,6 +126,12 @@ typedef enum
 
 } DMA_PRIORITY_t;
 
+typedef enum
+{
+    DMA_DOUBLE_BUFFER_DIS = 0, /* Double Buffer Mode Disable */
+    DMA_DOUBLE_BUFFER_EN = 1   /* Double Buffer Mode Enable */
+} DMA_DOUBLE_BUFFER_t;
+
 /**
  * @brief : Enum that holds Options for Memory Data Width
  * @enum  : @DMA_MEM_WIDTH_t
@@ -277,6 +283,7 @@ typedef struct
     DMA_MINC_t MemInc;                  /* DMA Memory Increment Mode */
     DMA_PINC_t PeriphInc;               /* DMA Peripheral Increment Mode */
     DMA_MODE_t Mode;                    /* DMA Mode */
+    DMA_DOUBLE_BUFFER_t DoubleBuffer;   /* DMA Double Buffer */
     DMA_DATA_DIRECTION_t Direction;     /* DMA Data Direction */
     DMA_INT_ENABLE_STRUCT_t EnableIT;   /* DMA Interrupt Enable */
     DMA_FIFO_MODE_t FIFOMode;           /* DMA FIFO Mode */
