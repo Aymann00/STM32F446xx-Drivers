@@ -210,6 +210,9 @@ ERRORS_t DMA_Init(DMA_INIT_STRUCT_t *Init)
     {
         /* Configuration Are OK */
 
+        /* Make Sure that Stream is Disabled Before Doing Any Configurations */
+        DMA_DisableStream(Init->DMAController, Init->StreamNumber);
+
         /* Set Channel */
         DMA_SetChannel(Init->DMAController, Init->StreamNumber, Init->ChannelNumber);
 
@@ -340,6 +343,10 @@ ERRORS_t DMA_DisableStream(DMA_CONTROLLER_t DMANumber, DMA_STREAMS_t StreamNumbe
         /* Configurations Are Correct */
 
         DMA[DMANumber]->STREAM[StreamNumber].CR &= (DMA_EN_MASK);
+
+        /* Wait Until Stream is Disabled */
+        while (((DMA[DMANumber]->STREAM[StreamNumber].CR >> EN) & 1))
+            ;
     }
     return Local_u8ErrorStatus;
 }
