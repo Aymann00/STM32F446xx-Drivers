@@ -60,6 +60,12 @@ typedef enum
 	DMA_OK,
 	DMA_NOK,
 	DMA_WRONG_CONFIGURATION,
+	/*==============
+	 * USART ERRORS
+	 *==============*/
+	USART_OK,
+	USART_NOK,
+	USART_WRONG_CONFIGURATION,
 } ERRORS_t;
 
 #endif /* ERRTYPE_H_ */
