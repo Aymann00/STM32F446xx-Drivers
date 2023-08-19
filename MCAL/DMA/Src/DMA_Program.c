@@ -487,7 +487,7 @@ static ERRORS_t DMA_IRQHandler(DMA_CONTROLLER_t DMANumber, DMA_STREAMS_t StreamN
 {
     ERRORS_t Local_u8ErrorStatus = DMA_OK;
 
-    if (DMANumber < DMA1 || DMANumber > DMA2 ||
+    if (DMANumber < DMA1_CONTROLLER || DMANumber > DMA2_CONTROLLER ||
         StreamNumber < DMA_STREAM0 || StreamNumber > DMA_STREAM7)
     {
         Local_u8ErrorStatus = DMA_NOK;
