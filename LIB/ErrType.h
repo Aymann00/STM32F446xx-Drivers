@@ -66,6 +66,13 @@ typedef enum
 	USART_OK,
 	USART_NOK,
 	USART_WRONG_CONFIGURATION,
+	/*==============
+	 * SPI ERRORS
+	 *==============*/
+	SPI_OK,
+	SPI_NOK,
+	SPI_INVALID_CONFIG,
+
 } ERRORS_t;
 
 #endif /* ERRTYPE_H_ */

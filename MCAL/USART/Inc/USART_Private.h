@@ -3,7 +3,7 @@
  * @file           : USART_Private.h
  * @Author         : Mohammed Ayman Shalaby
  * @brief          : Private File For USART Driver
- * @Date           : Jul 20, 2023
+ * @Date           : Aug 19, 2023
  ******************************************************************************
  * @attention
  *
