@@ -53,7 +53,7 @@ ERRORS_t MI2C_eInit( I2C_Config_t * I2CConfig )
 		if( I2CConfig->AddressingMode == I2C_ADD_MODE_7BIT )
 		{
 			/* Set Addressing Mode & Device Address */
-			I2C[ I2CConfig->I2CNumber ]->I2C_OAR1 |= (  (uint8_t)I2CConfig->SlaveAddress << 1 ) ;
+			I2C[ I2CConfig->I2CNumber ]->I2C_OAR1 |= (  (uint8_t)I2CConfig->OwnAddress << 1 ) ;
 		}
 		else
 		{
@@ -61,7 +61,7 @@ ERRORS_t MI2C_eInit( I2C_Config_t * I2CConfig )
 			I2C[ I2CConfig->I2CNumber ]->I2C_OAR1 |= (1<<I2C_OAR1_BIT_ADDMODE) ;
 
 			I2C[ I2CConfig->I2CNumber ]->I2C_OAR1 &= ( I2C_OAR1_DEVICE_ADD_MASK ) ;
-			I2C[ I2CConfig->I2CNumber ]->I2C_OAR1 |= ( I2CConfig->SlaveAddress ) ;
+			I2C[ I2CConfig->I2CNumber ]->I2C_OAR1 |= ( I2CConfig->OwnAddress ) ;
 		}
 
 		/* SETTING CLOCK STRETCHING */
