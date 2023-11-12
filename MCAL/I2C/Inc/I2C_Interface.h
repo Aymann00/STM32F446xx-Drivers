@@ -94,7 +94,7 @@ typedef struct
 	I2C_FREQ_t 			APB1ClockFrequencyMhz ; /*!< PROVIDE THE ABP1 CLOCK FREQUENCY
 												CHECK @I2C_FREQ_t >!*/
 
-	uint16_t  		    SlaveAddress	   ; /*!< DEVICE ADDRESS OR SLAVE ADDRESS >!*/
+	uint16_t  		    OwnAddress	   ; /*!< DEVICE ADDRESS OR SLAVE ADDRESS >!*/
 
 	uint8_t             AddressingMode     ; /*!< CONFIGURE DEVICE ADDRESSING MODE ,
 												  CHECK AVAILABLE OPTIONS @I2C_ADD_MODE_t >!*/
